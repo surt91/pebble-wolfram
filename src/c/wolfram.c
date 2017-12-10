@@ -6,6 +6,14 @@ static Window *s_main_window;
 static TextLayer *s_time_layer;
 static Layer *s_wolfram_layer;
 
+static const int num_rules = 14;
+static const int interesting_rules[14] = {
+     18,  22,  26,  30,  60,
+     82,  86,  89,  90, 102,
+    110, 122, 124, 126
+};
+static uint8_t rule = 0;
+
 
 static void update_time() {
     // Get a tm structure
@@ -13,9 +21,12 @@ static void update_time() {
     struct tm *tick_time = localtime(&temp);
 
     // Write the current hours and minutes into a buffer
-    static char s_buffer[20];
-    strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ?
-                                          "%H:%M, %d.%m.%Y" : "%I:%M, %d.%m.%Y", tick_time);
+    static char s_buffer[18];
+    strftime(s_buffer,
+             sizeof(s_buffer),
+             clock_is_24h_style() ? "%H:%M, %d.%m.%Y" : "%I:%M, %d.%m.%Y",
+             tick_time
+    );
 
     // Display this time on the TextLayer
     text_layer_set_text(s_time_layer, s_buffer);
@@ -32,8 +43,7 @@ static void wolfram_handler(struct tm *tick_time, TimeUnits units_changed) {
 static void wolfram_rule_update(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
 
-    uint8_t rule = 90;
-    int pixel_size = 6;
+    int pixel_size = 4;
 
     // w and h should both be 144
     int width = bounds.size.w / pixel_size;
@@ -47,8 +57,10 @@ static void wolfram_rule_update(Layer *layer, GContext *ctx) {
         b = 0;
     }
 
+    // with 1/3 change start with random seed instead of one seed in the center
+    int random = !(rand()%3);
     // fill the buffer out with a bitmap of the cellular automaton
-    ca_update_rolling_buffer(rule, width, height, out, 0);
+    ca_update_rolling_buffer(rule, width, height, out, random);
 
     // display the buffer on the screen
     // draw the background
@@ -87,6 +99,8 @@ static void main_window_load(Window *window) {
 
     // Create Wolfram rule Layer
     s_wolfram_layer = layer_create(GRect(0, 24, 144, 144));
+    // choose a new random rule at every load
+    rule = interesting_rules[rand()%num_rules];
     layer_set_update_proc(s_wolfram_layer, wolfram_rule_update);
 
     // Add to Window

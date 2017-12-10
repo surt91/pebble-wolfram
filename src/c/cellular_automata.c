@@ -87,19 +87,16 @@ int ca_get_next_status(uint8_t *status, int x, uint8_t rule)
 void ca_init_status_random(uint8_t *status, int x)
 {
     int i;
+    // 30% change of white
     for(i=0; i<x; i++)
-    {
-        status[i] = !(rand()%100);
-    }
+        status[i] = !(rand()%3);
 }
 
 void ca_init_status_seed(uint8_t *status, int x)
 {
     int i;
     for(i=0; i<x; i++)
-    {
         status[i] = 0;
-    }
     status[x/2] = 1;
 }
 
