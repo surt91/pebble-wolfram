@@ -124,3 +124,22 @@ void ca_main(uint8_t rule, int x, int y, uint8_t *out, int random_seed)
 
     free(status);
 }
+
+void ca_update_rolling_buffer(uint8_t rule, int x, int y, uint8_t *out, int random_seed)
+{
+    static int i = -1;
+
+    // seed in first iteration
+    if(i == -1) {
+        if(random_seed)
+            ca_init_status_random(out, x);
+        else
+            ca_init_status_seed(out, x);
+        i = 0;
+    } else {
+        for(int j=y-1; j>0; j--)
+            memcpy(out+j*x, out+(j-1)*x, x);
+
+        ca_get_next_status(out, x, rule);
+    }
+}

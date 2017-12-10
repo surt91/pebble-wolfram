@@ -33,8 +33,11 @@ static void wolfram_rule_update(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
 
     uint8_t rule = 90;
-    int width = bounds.size.w;
-    int height = bounds.size.h;
+    int pixel_size = 6;
+
+    // w and h should both be 144
+    int width = bounds.size.w / pixel_size;
+    int height = bounds.size.h / pixel_size;
 
     // allocate "out" once
     static int b = 1;
@@ -45,19 +48,23 @@ static void wolfram_rule_update(Layer *layer, GContext *ctx) {
     }
 
     // fill the buffer out with a bitmap of the cellular automaton
-    ca_main(rule, width, height, out, 0);
+    ca_update_rolling_buffer(rule, width, height, out, 0);
 
     // display the buffer on the screen
     // draw the background
-    graphics_context_set_fill_color(ctx, GColorWhite);
+    graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
     // draw the cells
-    graphics_context_set_fill_color(ctx, GColorBlack);
+    graphics_context_set_fill_color(ctx, GColorWhite);
     for(int j=0; j<height; ++j)
         for(int i=0; i<width; ++i)
             if(out[j*height + i])
-                graphics_fill_rect(ctx, GRect(i, j, 1, 1), 0, GCornerNone);
+            {
+                GRect pixel = GRect(i*pixel_size, j*pixel_size,
+                                    pixel_size, pixel_size);
+                graphics_fill_rect(ctx, pixel, 0, GCornerNone);
+            }
 }
 
 static void main_window_load(Window *window) {
@@ -70,8 +77,8 @@ static void main_window_load(Window *window) {
         GRect(0, 0, bounds.size.w, 24));
 
     // Improve the layout to be more like a watchface
-    text_layer_set_background_color(s_time_layer, GColorClear);
-    text_layer_set_text_color(s_time_layer, GColorBlack);
+    text_layer_set_background_color(s_time_layer, GColorBlack);
+    text_layer_set_text_color(s_time_layer, GColorWhite);
     text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
     text_layer_set_text_alignment(s_time_layer, GTextAlignmentLeft);
 
