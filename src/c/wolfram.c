@@ -21,10 +21,10 @@ static void update_time() {
     struct tm *tick_time = localtime(&temp);
 
     // Write the current hours and minutes into a buffer
-    static char s_buffer[18];
+    static char s_buffer[21];
     strftime(s_buffer,
              sizeof(s_buffer),
-             clock_is_24h_style() ? "%H:%M, %d.%m.%Y" : "%I:%M, %d.%m.%Y",
+             clock_is_24h_style() ? "%H:%M:%S, %d.%m.%Y" : "%I:%M:%S, %d.%m.%Y",
              tick_time
     );
 
@@ -34,9 +34,6 @@ static void update_time() {
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     update_time();
-}
-
-static void wolfram_handler(struct tm *tick_time, TimeUnits units_changed) {
     layer_mark_dirty(s_wolfram_layer);
 }
 
@@ -130,8 +127,7 @@ static void init() {
     update_time();
 
     // Register with TickTimerService
-    tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
-    tick_timer_service_subscribe(SECOND_UNIT, wolfram_handler);
+    tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
 }
 
 static void deinit() {

@@ -5,6 +5,9 @@ This watchface for the Pebble smartwatch visualizes [Wolfram's rules](http://mat
 The rules are chosen by random and are started from random seeds with periodic
 boundary conditions.
 
+Since the watchface updates every second, the battery might be drained quicker
+than normally.
+
 ![Picture of the watchface](doc/example.jpg)
 
 ## Setup
