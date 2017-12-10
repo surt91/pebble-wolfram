@@ -6,11 +6,12 @@ static Window *s_main_window;
 static TextLayer *s_time_layer;
 static Layer *s_wolfram_layer;
 
-static const int num_rules = 14;
-static const int interesting_rules[14] = {
+static const int num_rules = 18;
+static const int interesting_rules[18] = {
      18,  22,  26,  30,  60,
      82,  86,  89,  90, 102,
-    110, 122, 124, 126
+    110, 122, 124, 126, 146,
+    150, 154, 210
 };
 static uint8_t rule = 0;
 
