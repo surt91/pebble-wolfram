@@ -73,7 +73,7 @@ static void wolfram_rule_update(Layer *layer, GContext *ctx) {
         for(int i=0; i<width; ++i)
             if(out[j*height + i])
             {
-                GRect pixel = GRect(i*pixel_size, j*pixel_size,
+                GRect pixel = GRect(i*pixel_size, (width-j-1)*pixel_size,
                                     pixel_size, pixel_size);
                 graphics_fill_rect(ctx, pixel, 0, GCornerNone);
             }
